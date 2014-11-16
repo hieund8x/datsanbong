@@ -107,6 +107,17 @@
         <div id="step-time" style="display: none;">
             <h1 class="">Mời Bạn Chọn Khung Giờ:</h1>
             <div class="step-time-content">
+                <a href="javascript:void(0)" id="chon-gio-bd" class="hien-thi-gio" onclick="hienThiGio($('#start-time-wrap'))">
+                    Giờ bắt đầu :<br/>
+                    <span id="show-bd">Click để chọn</span>
+                </a>
+                <a href="javascript:void(0)" id="chon-gio-kt" class="hien-thi-gio" onclick="hienThiGio($('#end-time-wrap'))">
+                    Giờ kết thúc :<br/>
+                    <span id="show-kt">Click để chọn</span>
+                </a>
+                <div class="clear"></div>
+            </div>
+            <div id="start-time-wrap" class="select-time-content" style="display: none;">
                 <?php
                 date_default_timezone_set("Asia/Ho_Chi_Minh");
                 $start=strtotime('00:00');
@@ -117,17 +128,40 @@
                 for ($i=$start;$i<=$end;$i = $i + 30*60)
                 {
                 ?>
-                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> javascript:void(0) <?php else: ?>chonGio($(this));<?php endif; ?>">
+                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> alert('Không thể chọn giờ này!'); <?php else: ?>chonGio($(this),$('#gio-bd'),$('#start-time-wrap'),$('#show-bd'));<?php endif; ?>">
+                    <?php echo date('H:i',$i) ?>
+                    </a>
+                <?php
+                }
+                ?>
+                <div class="clear"></div>
+                <button type="button" class="btn" style="margin: 10px auto;" onclick="closeElement($('#start-time-wrap'))">Đóng</button>
+            </div>
+            <div id="end-time-wrap" class="select-time-content" style="display: none;">
+                <?php
+                date_default_timezone_set("Asia/Ho_Chi_Minh");
+                $start=strtotime('00:00');
+                $end=strtotime('23:30');
+                $localtime = localtime(time(),true);
+                $nowstr = $localtime['tm_hour'].':'.$localtime['tm_min'];
+                $now = strtotime($nowstr);
+                for ($i=$start;$i<=$end;$i = $i + 30*60)
+                {
+                    ?>
+                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> alert('Không thể chọn giờ này!'); <?php else: ?>chonGio($(this),$('#gio-kt'),$('#end-time-wrap'),$('#show-kt'));<?php endif;?>">
                         <?php echo date('H:i',$i) ?>
                     </a>
                 <?php
                 }
                 ?>
                 <div class="clear"></div>
+                <button  type="button" class="btn" style="margin: 10px auto;" onclick="closeElement($('#end-time-wrap'))">Đóng</button>
             </div>
-            <input type="hidden" id="gio" name="gio" value="" messerr="Vui lòng chọn Khung giờ để tiếp tục" />
+            <input type="hidden" id="gio-bd" name="gio_bd" value="" messerr="Vui lòng chọn Khung giờ để tiếp tục" />
+            <input type="hidden" id="gio-kt" name="gio_kt" value="" messerr="Vui lòng chọn Khung giờ để tiếp tục" />
             <div class="action">
                 <button class="btn prev-step" type="button" onclick="backStep($('#step-date'),$('#step-time'))">Quay lại</button>
+                <button class="btn next-step" type="button" onclick="ktraKhungGio()">Tiếp Tục</button>
             </div>
             <div class="clear"></div>
         </div>
@@ -164,9 +198,36 @@
             $('#ngay-thang').val(value);
             $('#show-date').html(day +' - '+value);
         }
-        function chonGio(el){
-            $('#gio').val(el.attr('value'));
-            nextStep($('#gio'),$('#step-time'),$('#step-info'));
+        function chonGio(elGet,elSet,elC,elShow){
+            $(elSet).val(elGet.attr('value'));
+            elShow.html(elSet.val());
+            elC.hide();
+        }
+        function ktraKhungGio(){
+            if($('#gio-bd').val()=='' || $('#gio-kt').val()==''){
+                alert('Vui chọn khung giờ!');
+                return;
+            }
+            var startT = $('#gio-bd').val().split(":");
+            var startE = $('#gio-kt').val().split(":");
+            var today = new Date();
+            var reservStart = new Date(today.getFullYear(),today.getMonth(),today.getDate(),startT[0],startT[1]);
+            var reservEnd = new Date(today.getFullYear(),today.getMonth(),today.getDate(),startE[0],startE[1]);
+            var res = reservEnd - reservStart;
+            if(res<0){
+                alert('Thời gian kết thúc không hợp lệ. Vui lòng chọn lại!');
+                return;
+            }
+            if(res<3600000){
+                alert('Thời gian tối thiểu để đặt là 1 giờ. Vui lòng chọn lại!');
+                return;
+            }
+            $('#over-loading').show();
+            setTimeout(function(){
+                $('#step-time').hide();
+                $('#step-info').show('slow');
+                $('#over-loading').hide();
+            },1000);
         }
         function nextStep(elVal,elHide,elShow){
             if(elVal.val()=='' || elVal.val()==0){
@@ -187,6 +248,16 @@
                 elShow.show('slow');
                 $('#over-loading').hide();
             },2000);
+        }
+        function hienThiGio(el){
+            $('#over-loading').show();
+            setTimeout(function(){
+                el.show();
+                $('#over-loading').hide();
+            },1000);
+        }
+        function closeElement(el){
+            el.hide();
         }
 
         function getDayVN(val){

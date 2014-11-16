@@ -33,6 +33,7 @@
 }
 
 .btn{
+    display: block;
     padding: 10px 12px;
     border: solid 1px #BFBEBE;
     background: #FFFCFC;
@@ -120,6 +121,32 @@
     float: right;
     margin-right: 50px;
     margin-bottom: 30px;
+}
+
+.hien-thi-gio{
+    display: block;
+    width: 25%;
+    float: left;
+    height: 150px;
+    border: 1px solid #4C58EE;
+    margin: 20px 10%;
+    text-align: center;
+    padding-top: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #FFF;
+    background: #4C58EE;
+    text-decoration: none;
+}
+
+.select-time-content{
+    position: fixed;
+    top: 0;
+    padding: 5px 0;
+    padding-left: 10%;
+    background: #FFF;
+    height: 100%;
+    overflow-y: auto ;
 }
 
 .clear{
