@@ -31,6 +31,7 @@
  * @since 2014
  */
 // Posttype Khung Giờ
+require_once 'modulesanbong/san-bong.php';
 require_once 'modulesanbong/khung-gio.php';
 
 

@@ -49,22 +49,33 @@
             <div class="step-content">
                 <h1 class="">Mời Bạn Chọn Sân:</h1>
                 <div class="list">
-                    <a class="btn-box-san" href="javascript:void(0)" value="1" loaisan="Sân cỏ" onclick="chonSan($(this))">
-                        <img style="width: 100%; height: 170px" src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/san-bong.jpg' ?>" alt="" />
-                        <span class="san-title">Sân 1 - Sân cỏ</span>
-                    </a>
-                    <a class="btn-box-san" href="javascript:void(0)" value="2" loaisan="Sân đất" onclick="chonSan($(this))">
-                        <img style="width: 100%; height: 170px" src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/san-bong.jpg' ?>" alt="" />
-                        <span class="san-title">Sân 2 - Sân đất</span>
-                    </a>
-                    <a class="btn-box-san" href="javascript:void(0)" value="3" loaisan="Sân đất" onclick="chonSan($(this))">
-                        <img style="width: 100%; height: 170px" src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/san-bong.jpg' ?>" alt="" />
-                        <span class="san-title">Sân 3 - Sân đất</span>
-                    </a>
-                    <a class="btn-box-san" href="javascript:void(0)" value="4" loaisan="Sân đất" onclick="chonSan($(this))">
-                        <img style="width: 100%; height: 170px" src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/san-bong.jpg' ?>" alt="" />
-                        <span class="san-title">Sân 4 - Sân đất</span>
-                    </a>
+                    <?php
+                    $type = 'sanbong';
+                    $args=array(
+                        'post_type' => $type,
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'caller_get_posts'=> 1,
+                        'orderby ' => 'ID',
+                        'order'    => 'ASC'
+                    );
+                    $sanbongQuery = new WP_Query($args);
+                    $sans = $sanbongQuery->posts;
+                    if(count($sans)>0):
+                    foreach($sans as $san):
+                        $loaisan = 'Sân cỏ';
+                        $_loai = get_post_meta($san->ID, 'loai_san', true);
+                        if($_loai=='sandat'){
+                            $loaisan = 'Sân đất';
+                        }
+                    ?>
+                        <a class="btn-box-san" href="javascript:void(0)" value="<?php echo $san->ID ?>" loaisan="<?php echo $loaisan ?>" onclick="chonSan($(this))">
+                            <img style="width: 100%; height: 170px" src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/san-bong.jpg' ?>" alt="" />
+                            <span class="san-title"><?php echo $san->post_title .' - '. $loaisan; ?></span>
+                        </a>
+                    <?php
+                    endforeach;
+                    endif; ?>
                 </div>
                 <div class="clear"></div>
                 <div class="show-selected" style="display: none;">
@@ -95,14 +106,24 @@
         </div>
         <div id="step-time" style="display: none;">
             <h1 class="">Mời Bạn Chọn Khung Giờ:</h1>
-            <div class="step-content">
-                <a class="btn-box" href="javascript:void(0)" value="1" onclick="chonGio($(this))">12h30 - 14h00</a>
-                <a class="btn-box" href="javascript:void(0)" value="2"  onclick="chonGio($(this))">14h00 - 15h30</a>
-                <a class="btn-box" href="javascript:void(0)" value="3"  onclick="chonGio($(this))">15h30 - 17h00</a>
-                <a class="btn-box" href="javascript:void(0)" value="4"  onclick="chonGio($(this))">17h00 - 18h30</a>
-                <a class="btn-box" href="javascript:void(0)" value="5"  onclick="chonGio($(this))">18h30 - 20h00</a>
-                <a class="btn-box" href="javascript:void(0)" value="6"  onclick="chonGio($(this))">20h00 - 21h30</a>
-                <a class="btn-box" href="javascript:void(0)" value="7"  onclick="chonGio($(this))">21h30 - 23h00</a>
+            <div class="step-time-content">
+                <?php
+                date_default_timezone_set("Asia/Ho_Chi_Minh");
+                $start=strtotime('00:00');
+                $end=strtotime('23:30');
+                $localtime = localtime(time(),true);
+                $nowstr = $localtime['tm_hour'].':'.$localtime['tm_min'];
+                $now = strtotime($nowstr);
+                for ($i=$start;$i<=$end;$i = $i + 30*60)
+                {
+                ?>
+                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> javascript:void(0) <?php else: ?>chonGio($(this));<?php endif; ?>">
+                        <?php echo date('H:i',$i) ?>
+                    </a>
+                <?php
+                }
+                ?>
+                <div class="clear"></div>
             </div>
             <input type="hidden" id="gio" name="gio" value="" messerr="Vui lòng chọn Khung giờ để tiếp tục" />
             <div class="action">
