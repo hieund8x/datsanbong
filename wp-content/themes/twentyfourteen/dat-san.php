@@ -44,7 +44,8 @@
 <body>
 <?php if (have_posts()) : while (have_posts()) : the_post();?>
 <div id="datsan-wrapper">
-    <form id="dat-san" action="" method="post">
+    <div class="col-left">
+        <form id="dat-san" action="" method="post">
         <div id="step-stadium">
             <div class="step-content">
                 <h1 class="">Mời Bạn Chọn Sân:</h1>
@@ -167,11 +168,46 @@
         </div>
         <div id="step-info" style="display: none;">
             <h1>Vui điền thông tin liên hệ của bạn:</h1>
+            <div class="info-content">
+                <table border="0" style="margin:0 auto;">
+                    <tr>
+                        <td style="width: 30%;" align="right"><label for="ho_ten">Họ và tên <em>*</em></label></td>
+                        <td><input type="text" id="ho_ten" class="form-input" name="ho_ten" placeholder="Họ tên" />
+                            <br/><span id="errHT" class="err">Vui lòng nhập họ tên</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;" align="right"><label for="dien_thoai">Số điện thoại <em>*</em></label></td>
+                        <td><input type="text" id="dien_thoai" class="form-input" name="dien_thoai" placeholder="Điện thoại" />
+                            <br/><span id="errDT" class="err">Vui lòng nhập số điện thoại</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;" align="right"><label for="email">Email</label></td>
+                        <td><input type="text" id="email" class="form-input" name="email" placeholder="Email" /></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;" align="right"><label for="dia_chi">Địa chỉ</label></td>
+                        <td><input type="text" id="dia_chi" class="form-input" name="dia_chi" placeholder="Địa chỉ" /></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%;" align="right"><label for="ghi_chu">Ghi chú</label></td>
+                        <td>
+                            <textarea class="form-area" id="ghi_chu" name="ghi_chu" cols="50" rows="5"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <div class="action">
                 <button class="btn prev-step" type="button" onclick="backStep($('#step-time'),$('#step-info'))">Quay lại</button>
+                <button class="btn next-step" type="button" onclick="submitForm()">Đặt Sân</button>
             </div>
         </div>
     </form>
+    </div>
+    <div class="col-right">
+
+    </div>
 </div>
 <div id="over-loading" style="display: none;">
     <img src="<?php echo get_template_directory_uri() . '/modulesanbong/css/images/loading.gif' ?>" alt="" />
@@ -189,6 +225,30 @@
                 }
             });
         }); // End: $(document).ready()
+
+        function submitForm(){
+
+            var checkHT = true;
+            var checkDT = true;
+            if($('#ho_ten').val()==''){
+                checkHT = false;
+            }
+            if($('#dien_thoai').val()==''){
+                checkDT = false;
+            }
+            if(!checkHT){
+                $('#errHT').show('slow');
+            }else{
+                $('#errHT').hide();
+            }
+            if(!checkDT){
+                $('#errDT').show('slow');
+            }else{
+                $('#errDT').hide();
+            }
+            var checkSubmid = checkHT = checkDT;
+        }
+
         function chonSan(el){
             $('#so-san').val(el.attr('value'));
             $('#show-san').html('Sân '+el.attr('value')+' - Loại sân: '+el.attr('loaisan'));
