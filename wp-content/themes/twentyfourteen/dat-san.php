@@ -129,7 +129,7 @@
                 for ($i=$start;$i<=$end;$i = $i + 30*60)
                 {
                 ?>
-                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> alert('Không thể chọn giờ này!'); <?php else: ?>chonGio($(this),$('#gio-bd'),$('#start-time-wrap'),$('#show-bd'));<?php endif; ?>">
+                    <a class="btn-box-gio" href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="chonGio($(this),$('#gio-bd'),$('#start-time-wrap'),$('#show-bd'));">
                     <?php echo date('H:i',$i) ?>
                     </a>
                 <?php
@@ -149,7 +149,7 @@
                 for ($i=$start;$i<=$end;$i = $i + 30*60)
                 {
                     ?>
-                    <a class="btn-box-gio" <?php if($i<$now): ?>style="background: #E1DADA;" <?php endif; ?> href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="<?php if($i<$now): ?> alert('Không thể chọn giờ này!'); <?php else: ?>chonGio($(this),$('#gio-kt'),$('#end-time-wrap'),$('#show-kt'));<?php endif;?>">
+                    <a class="btn-box-gio"  href="javascript:void(0)" value="<?php echo date('H:i',$i) ?>" onclick="chonGio($(this),$('#gio-kt'),$('#end-time-wrap'),$('#show-kt'));">
                         <?php echo date('H:i',$i) ?>
                     </a>
                 <?php
@@ -274,6 +274,10 @@
             var reservStart = new Date(today.getFullYear(),today.getMonth(),today.getDate(),startT[0],startT[1]);
             var reservEnd = new Date(today.getFullYear(),today.getMonth(),today.getDate(),startE[0],startE[1]);
             var res = reservEnd - reservStart;
+            if(reservStart-today<0){
+                alert('Thời gian bắt đầu không hợp lệ. Vui lòng chọn lại!');
+                return;
+            }
             if(res<0){
                 alert('Thời gian kết thúc không hợp lệ. Vui lòng chọn lại!');
                 return;

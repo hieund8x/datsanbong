@@ -30,9 +30,9 @@
  * Thêm module Đặt giờ sân bóng
  * @since 2014
  */
-// Posttype Khung Giờ
 require_once 'modulesanbong/san-bong.php';
 require_once 'modulesanbong/khung-gio.php';
+require_once 'modulesanbong/ds-dat-san.php';
 
 
 /**
