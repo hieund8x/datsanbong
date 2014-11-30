@@ -108,11 +108,11 @@
         <div id="step-time" style="display: none;">
             <h1 class="">Mời Bạn Chọn Khung Giờ:</h1>
             <div class="step-time-content">
-                <a href="javascript:void(0)" id="chon-gio-bd" class="hien-thi-gio" onclick="hienThiGio($('#start-time-wrap'))">
+                <a href="javascript:void(0)" id="chon-gio-bd" class="hien-thi-gio" onclick="hienThiGio($('#start-time-wrap'),'bd')">
                     Giờ bắt đầu :<br/>
                     <span id="show-bd">Click để chọn</span>
                 </a>
-                <a href="javascript:void(0)" id="chon-gio-kt" class="hien-thi-gio" onclick="hienThiGio($('#end-time-wrap'))">
+                <a href="javascript:void(0)" id="chon-gio-kt" class="hien-thi-gio" onclick="hienThiGio($('#end-time-wrap'),'kt')">
                     Giờ kết thúc :<br/>
                     <span id="show-kt">Click để chọn</span>
                 </a>
@@ -313,7 +313,83 @@
                 $('#over-loading').hide();
             },2000);
         }
-        function hienThiGio(el){
+        function hienThiGio(el,type){
+            if(type=='bd'){
+                if($('#ngay-thang').val()==''){
+                    alert('Vui lòng quay lại bước trước để chọn ngày!');
+                    return;
+                }else{
+                    var daySelect = $('#ngay-thang').val();
+                    var today = new Date();
+                    var dd = today.getDate();
+                    var mm = today.getMonth()+1;
+                    var yyyy = today.getFullYear();
+                    if(dd<10) {
+                        dd='0'+dd;
+                    }
+                    if(mm<10) {
+                        mm='0'+mm;
+                    }
+                    var dayCheck = dd+'/'+mm+'/'+yyyy;
+                    if(daySelect == dayCheck){
+                        var h = today.getHours();
+                        var m = today.getMinutes();
+                        if(h<10) {
+                            h='0'+h;
+                        }
+                        if(m<10) {
+                            m='0'+m;
+                        }
+                        var timeCheck = h+':'+m;
+                        jQuery('#start-time-wrap .btn-box-gio').each(function(){
+                            var thisT = $(this).attr('value').split(":");
+                            var checkT = timeCheck.split(":");
+                            var thisReserv = new Date(today.getFullYear(),today.getMonth(),today.getDate(),thisT[0],thisT[1]);
+                            var checkReserv = new Date(today.getFullYear(),today.getMonth(),today.getDate(),checkT[0],checkT[1]);
+                            if(thisReserv-checkReserv<0){
+                                $(this).css('background','#BCBDC1');
+                                $(this).attr('onclick',"alert('Không thể chọn giờ này do nhỏ hơn giờ hiện tại.')");
+                            }
+                        });
+                    }
+                }
+            }else if(type=='kt'){
+                if($('#ngay-thang').val()==''){
+                    alert('Vui lòng quay lại bước trước để chọn ngày!');
+                    return;
+                }
+                if($('#show-bd').html()==''||$('#show-bd').html()=='Click để chọn'){
+                    alert('Vui lòng chọn giờ bắt đầu!');
+                    return;
+                }
+                var daySelect = $('#ngay-thang').val();
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1;
+                var yyyy = today.getFullYear();
+                if(dd<10) {
+                    dd='0'+dd;
+                }
+                if(mm<10) {
+                    mm='0'+mm;
+                }
+                var dayCheck = dd+'/'+mm+'/'+yyyy;
+                if(daySelect == dayCheck){
+                    var timeCheck = $('#show-bd').html();
+                    jQuery('#end-time-wrap .btn-box-gio').each(function(){
+                        var thisT = $(this).attr('value').split(":");
+                        var checkT = timeCheck.split(":");
+                        var thisReserv = new Date(today.getFullYear(),today.getMonth(),today.getDate(),thisT[0],thisT[1]);
+                        var checkReserv = new Date(today.getFullYear(),today.getMonth(),today.getDate(),checkT[0],checkT[1]);
+                        if(thisReserv-checkReserv<3600000){
+                            $(this).css('background','#BCBDC1');
+                            $(this).attr('onclick',"alert('Thời gian tối thiểu để đặt là 1 giờ. Vui lòng chọn lại!')");
+                        }
+                    });
+                }
+            }else{
+                return;
+            }
             $('#over-loading').show();
             setTimeout(function(){
                 el.show();
